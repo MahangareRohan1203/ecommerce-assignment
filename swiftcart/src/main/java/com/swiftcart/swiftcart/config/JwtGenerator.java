@@ -19,7 +19,7 @@ public class JwtGenerator {
         String jwt = Jwts.builder()
                 .claim("username", authentication.getName())
                 .claim("authorities",populate(authentication.getAuthorities()))
-                .issuedAt(new Date()).expiration(new Date(new Date().getTime() + 3_60_000)).issuer("Swift-Cart").subject("Token for Using App").signWith(secretKey).compact();
+                .issuedAt(new Date()).expiration(new Date(new Date().getTime() + 3_60_00000)).issuer("Swift-Cart").subject("Token for Using App").signWith(secretKey).compact();
         return jwt;
     }
 

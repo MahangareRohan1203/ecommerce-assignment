@@ -14,7 +14,7 @@ public class CartItem {
     private String size;
 
     private String color;
-    private String quantity;
+    private int quantity;
 
     @ManyToOne
     @JoinColumn(name = "cartId")

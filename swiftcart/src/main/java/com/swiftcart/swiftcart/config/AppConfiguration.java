@@ -48,8 +48,11 @@ public class AppConfiguration {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> {
                     a.requestMatchers("/hello").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/users")
-                            .permitAll().anyRequest().authenticated();
+                            .requestMatchers(HttpMethod.POST, "/users", "/admin")
+                            .permitAll()
+                            .requestMatchers("*/admin").hasAuthority("ROLE_ADMIN")
+                            .requestMatchers("*/users").hasAuthority("ROLE_USER")
+                            .anyRequest().authenticated();
                 }).cors(c -> c.configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
