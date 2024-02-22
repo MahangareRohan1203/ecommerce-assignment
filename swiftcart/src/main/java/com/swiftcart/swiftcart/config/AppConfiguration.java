@@ -33,6 +33,15 @@ import java.util.Collections;
 @Configuration
 public class AppConfiguration {
 
+
+    @Autowired
+    private CustomAccessDeniedHandler accessDeniedHandler;
+    @Autowired
+    private CustomAuthenticationException customAuthenticationException;
+
+    @Autowired
+    private CustomTokenException customTokenException;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -55,9 +64,12 @@ public class AppConfiguration {
                         return corsConfiguration;
                     }
                 }))
-                .addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class).exceptionHandling(c ->
+                        c.authenticationEntryPoint(customTokenException)
+                                .accessDeniedHandler(accessDeniedHandler))
+
                 .csrf(c -> c.disable())
-                .httpBasic(Customizer.withDefaults()).formLogin(Customizer.withDefaults());
+                .httpBasic(c -> c.authenticationEntryPoint(customAuthenticationException)).formLogin(Customizer.withDefaults());
 
         return httpSecurity.build();
 

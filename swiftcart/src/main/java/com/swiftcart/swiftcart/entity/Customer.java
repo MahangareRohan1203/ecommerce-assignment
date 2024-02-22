@@ -1,10 +1,7 @@
 package com.swiftcart.swiftcart.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -15,6 +12,8 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
 
+    private String firstName;
+    private String lastName;
     private String email;
 
     private String role;
@@ -22,4 +21,9 @@ public class Customer {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @Transient
+    private boolean isDeleted = false;
+
+    @OneToOne(mappedBy = "customer")
+    private Cart cart;
 }

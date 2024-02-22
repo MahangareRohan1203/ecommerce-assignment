@@ -46,7 +46,7 @@ public class JwtValidator extends OncePerRequestFilter {
 
             }
         } catch (Exception e) {
-            System.out.println("INSIDE VALIDATOR");
+            throw new BadCredentialsException("Invalid Token" + e.getLocalizedMessage());
 
         }
 
