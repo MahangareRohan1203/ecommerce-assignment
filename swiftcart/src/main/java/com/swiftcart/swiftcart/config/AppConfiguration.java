@@ -50,8 +50,9 @@ public class AppConfiguration {
                     a.requestMatchers("/hello").permitAll()
                             .requestMatchers(HttpMethod.POST, "/users", "/admin")
                             .permitAll()
-                            .requestMatchers("*/admin").hasAuthority("ROLE_ADMIN")
-                            .requestMatchers("*/users").hasAuthority("ROLE_USER")
+                            .requestMatchers(HttpMethod.GET,"/products", "/categories").permitAll()
+                            .requestMatchers("*/admin/**").hasAuthority("ADMIN")
+                            .requestMatchers("*/users/**").hasAuthority("USER")
                             .anyRequest().authenticated();
                 }).cors(c -> c.configurationSource(new CorsConfigurationSource() {
                     @Override
