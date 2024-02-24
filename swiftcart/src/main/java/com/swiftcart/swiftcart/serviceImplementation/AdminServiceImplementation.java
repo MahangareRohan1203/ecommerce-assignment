@@ -1,9 +1,12 @@
 package com.swiftcart.swiftcart.serviceImplementation;
 
+import com.swiftcart.swiftcart.entity.Availability;
 import com.swiftcart.swiftcart.entity.Category;
 import com.swiftcart.swiftcart.entity.Product;
+import com.swiftcart.swiftcart.repository.AvailabilityRepository;
 import com.swiftcart.swiftcart.repository.CategoryRepository;
 import com.swiftcart.swiftcart.repository.ProductRepository;
+import com.swiftcart.swiftcart.request.ProductRequest;
 import com.swiftcart.swiftcart.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,34 +23,64 @@ public class AdminServiceImplementation implements AdminService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private AvailabilityRepository availabilityRepository;
+
     @Override
-    public Product addNewProductHandler(Product product) {
-        if (product.getCategory() != null && product.getCategory().getParentCategory() != null) {
-            Category category = categoryRepository.findByNameAndParentCategory_Name(product.getCategory().getName(), product.getCategory().getParentCategory().getName());
+    public Product addNewProductHandler(ProductRequest productRequest) {
+        Category topLevel = categoryRepository.findByName(productRequest.getTopLevelCategory());
 
-            if(category == null){
-
-            }
-
-            Category parent = saveCategory(product.getCategory().getParentCategory());
-            product.getCategory().setParentCategory(parent);
-            product.setCategory(saveCategory(product.getCategory()));
-        } else if (product.getCategory() != null) {
-            System.out.println("CALLED THIS - 2");
-            product.setCategory(saveCategory(product.getCategory()));
-        } else {
-            System.out.println("CATEGORY IS NULL");
+        if (topLevel == null) {
+            Category top = new Category();
+            top.setName(productRequest.getTopLevelCategory());
+            top.setLevel(1);
+            topLevel = saveCategory(top);
         }
-        product = productRepository.save(product);
+
+        Category secondLevel = categoryRepository.findByNameAndParentCategory_Name(productRequest.getSecondLevelCategory(), productRequest.getTopLevelCategory());
+        if (secondLevel == null) {
+            Category second = new Category();
+            second.setName(productRequest.getSecondLevelCategory());
+            second.setLevel(2);
+            second.setParentCategory(topLevel);
+            secondLevel = saveCategory(second);
+        }
+
+        Category thirdLevel = categoryRepository.findByNameAndParentCategory_Name(productRequest.getThirdLevelCategory(), productRequest.getSecondLevelCategory());
+        if (thirdLevel == null) {
+            Category third = new Category();
+            third.setName(productRequest.getThirdLevelCategory());
+            third.setLevel(3);
+            third.setParentCategory(secondLevel);
+            thirdLevel = saveCategory(third);
+        }
+        Product product = new Product();
+        product.setTitle(productRequest.getTitle());
+        product.setPrice(productRequest.getPrice());
+        product.setImage(productRequest.getImage());
+        product.setDescription(productRequest.getDescription());
+        product.setCategory(thirdLevel);
+        productRepository.save(product);
         return product;
     }
 
-    public Category saveCategory(Category category) {
-        Optional<Category> parent = categoryRepository.findByName(category.getName());
-        if (parent.isPresent()) {
-            return parent.get();
-        } else {
-            return categoryRepository.save(category);
+    @Override
+    public Availability addNewAvailability(long productId, Availability availability) {
+        Product product = productRepository.findById(productId).orElseThrow(()->new RuntimeException("Product Not found with given id"));
+
+        Availability existed = availabilityRepository.findByProduct_productIdAndColorAndSize(productId, availability.getColor(), availability.getSize());
+        if(existed == null){
+            availability.setProduct(product);
+            existed = availabilityRepository.save(availability);
+        }else{
+            existed.setQuantity(existed.getQuantity() + availability.getQuantity());
+            existed.setPriceOfEach(availability.getPriceOfEach());
+            availabilityRepository.save(existed);
         }
+        return existed;
+    }
+
+    public Category saveCategory(Category category) {
+        return categoryRepository.save(category);
     }
 }
