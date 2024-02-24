@@ -22,4 +22,7 @@ public class Cart {
 
     @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItemList = new ArrayList<>();
+
+    @Transient
+    private double total;
 }

@@ -2,6 +2,7 @@ package com.swiftcart.swiftcart.controller;
 
 import com.swiftcart.swiftcart.config.JwtGenerator;
 import com.swiftcart.swiftcart.entity.*;
+import com.swiftcart.swiftcart.exception.CartException;
 import com.swiftcart.swiftcart.exception.CustomerException;
 import com.swiftcart.swiftcart.reponse.LogInResponse;
 import com.swiftcart.swiftcart.reponse.Response;
@@ -60,39 +61,53 @@ public class CustomerController {
 
     }
 
-    @GetMapping("/cart") //
-    public ResponseEntity<List<CartItem>> getAllCartItemsHandler(@RequestHeader("Authorization") String jwt) {
-        return new ResponseEntity<>(null, HttpStatus.OK);
+    @GetMapping("/cart") // ✅
+    public ResponseEntity<Cart> getAllCartItemsHandler(@RequestHeader("Authorization") String jwt) {
+        String email = jwtGenerator.getEmailFromToken(jwt);
+        Cart cart = customerService.getCart(email);
+        return new ResponseEntity<>(cart, HttpStatus.OK);
     }
 
-    @PostMapping("/cart") //
-    public ResponseEntity<CartItem> createCartItem(@RequestHeader("Authorization") String jwt, @RequestBody @Valid CartItemRequest item) {
-        return new ResponseEntity<>(null, HttpStatus.OK);
+    @PostMapping("/cart") // ✅
+    public ResponseEntity<CartItem> createCartItem(@RequestHeader("Authorization") String jwt, @RequestBody @Valid CartItemRequest item) throws CartException {
+        String email = jwtGenerator.getEmailFromToken(jwt);
+        CartItem added = customerService.addProductToCart(email, item);
+        return new ResponseEntity<>(added, HttpStatus.OK);
     }
 
-    @PatchMapping("/cart/{id}") //
-    public ResponseEntity<CartItem> updateCartItem(@RequestHeader("Authorization") String jwt, @RequestBody CartItem cartItem, @PathVariable Long id) {
-        return ResponseEntity.accepted().body(null);
+    @PatchMapping("/cart/{id}") // ✅
+    public ResponseEntity<CartItem> updateCartItem(@RequestHeader("Authorization") String jwt, @RequestBody CartItemRequest cartItem, @PathVariable Long id) throws CartException {
+        String email = jwtGenerator.getEmailFromToken(jwt);
+        CartItem item = customerService.updateCartItem(email, cartItem, id);
+        return ResponseEntity.accepted().body(item);
     }
 
-    @DeleteMapping("/cart/{id}") //
-    public ResponseEntity<Response> deleteCartItem(@RequestHeader("Authorization") String jwt, @PathVariable long id) {
-        return ResponseEntity.accepted().body(null);
+    @DeleteMapping("/cart/{id}") // ✅
+    public ResponseEntity<Response> deleteCartItem(@RequestHeader("Authorization") String jwt, @PathVariable long id) throws CartException {
+        String email = jwtGenerator.getEmailFromToken(jwt);
+        String message = customerService.deleteCartItem(email, id);
+        return ResponseEntity.accepted().body(new Response(message));
     }
 
     @PostMapping("/orders") //
-    public ResponseEntity<Orders> createNewOrderHandler(@RequestHeader("Authorization") String jwt) {
-        return ResponseEntity.accepted().body(null);
+    public ResponseEntity<Orders> createNewOrderHandler(@RequestHeader("Authorization") String jwt, @RequestBody Address address) throws CustomerException, CartException {
+        String email = jwtGenerator.getEmailFromToken(jwt);
+        Orders order = customerService.createNewOrder(email, address);
+        return ResponseEntity.accepted().body(order);
     }
 
     @GetMapping("/orders") //
-    public ResponseEntity<List<Orders>> getAllOrdersOfUsersHandler(@RequestHeader("Authorization") String jwt) {
-        return ResponseEntity.ok(null);
+    public ResponseEntity<List<Orders>> getAllOrdersOfUsersHandler(@RequestHeader("Authorization") String jwt) throws CustomerException {
+        String email = jwtGenerator.getEmailFromToken(jwt);
+        List<Orders> list = customerService.findAllOrders(email);
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/orders/{id}") //
-    public ResponseEntity<Orders> getOrderDetailsHandler(@RequestHeader("Authorization") String jwt, @PathVariable long id) {
-        return ResponseEntity.ok(null);
+    public ResponseEntity<Orders> getOrderDetailsHandler(@RequestHeader("Authorization") String jwt, @PathVariable long id) throws CustomerException {
+        String email = jwtGenerator.getEmailFromToken(jwt);
+        Orders order = customerService.findOrderById(email, id);
+        return ResponseEntity.ok(order);
     }
 
     @GetMapping("/orders/{id}/payment") //

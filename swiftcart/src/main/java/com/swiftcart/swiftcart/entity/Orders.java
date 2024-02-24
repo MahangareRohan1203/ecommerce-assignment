@@ -33,4 +33,7 @@ public class Orders {
     @JoinColumn(name = "addressId")
     private Address address;
 
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> orderList = new ArrayList<>();
+
 }

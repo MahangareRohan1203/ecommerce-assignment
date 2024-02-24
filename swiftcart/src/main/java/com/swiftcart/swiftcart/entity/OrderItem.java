@@ -1,5 +1,6 @@
 package com.swiftcart.swiftcart.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,6 +22,7 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "orderId")
+    @JsonIgnore
     private Orders order;
 
 

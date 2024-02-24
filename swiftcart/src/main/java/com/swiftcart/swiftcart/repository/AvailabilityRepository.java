@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface AvailabilityRepository extends JpaRepository<Availability, Long> {
 
     public Availability findByProduct_productIdAndColorAndSize(long id, String color, String size);
+
 }

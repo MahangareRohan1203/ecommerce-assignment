@@ -19,11 +19,11 @@ public class Product {
     private String image;
     private double price;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<Availability> availabilityList = new ArrayList<>();
 
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "categoryId")
     private Category category;
 }

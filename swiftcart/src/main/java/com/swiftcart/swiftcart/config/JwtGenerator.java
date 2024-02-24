@@ -1,5 +1,6 @@
 package com.swiftcart.swiftcart.config;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
@@ -18,7 +19,7 @@ public class JwtGenerator {
         SecretKey secretKey = Keys.hmacShaKeyFor(JwtConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
         String jwt = Jwts.builder()
                 .claim("username", authentication.getName())
-                .claim("authorities",populate(authentication.getAuthorities()))
+                .claim("authorities", populate(authentication.getAuthorities()))
                 .issuedAt(new Date()).expiration(new Date(new Date().getTime() + 3_60_00000)).issuer("Swift-Cart").subject("Token for Using App").signWith(secretKey).compact();
         return jwt;
     }
@@ -31,4 +32,13 @@ public class JwtGenerator {
         return String.join(",", set);
     }
 
+    public String getEmailFromToken(String jwt) {
+        try {
+            jwt = jwt.substring(7);
+            Claims claims = Jwts.parser().verifyWith(Keys.hmacShaKeyFor(JwtConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8))).build().parseSignedClaims(jwt).getPayload();
+            return String.valueOf(claims.get("username"));
+        } catch (Exception e) {
+            throw new RuntimeException(e.getLocalizedMessage());
+        }
+    }
 }

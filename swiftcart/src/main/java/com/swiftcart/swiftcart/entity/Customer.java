@@ -1,5 +1,6 @@
 package com.swiftcart.swiftcart.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -25,5 +26,6 @@ public class Customer {
     private boolean isDeleted = false;
 
     @OneToOne(mappedBy = "customer")
+    @JsonIgnore
     private Cart cart;
 }
