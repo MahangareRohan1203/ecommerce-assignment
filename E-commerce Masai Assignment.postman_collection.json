@@ -1,0 +1,591 @@
+{
+	"info": {
+		"_postman_id": "42a021f8-a2df-4d78-b33b-0349ffa1ab75",
+		"name": "E-commerce Masai Assignment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24854607",
+		"_collection_link": "https://www.postman.com/interstellar-moon-315753/workspace/e-commerce-backend/collection/24854607-42a021f8-a2df-4d78-b33b-0349ffa1ab75?action=share&source=collection_link&creator=24854607"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Hello",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/hello",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"hello"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register new User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"test1@gmail.com\",\n    \"password\":\"Password1234\",\n    \"firstName\":\"test\",\n    \"lastName\":\"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{new_ecom_base}}/users",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "Password12345",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test1@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/users/signIn",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"users",
+								"signIn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "products",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/products",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/cart",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\":1,\n    \"size\":\"S\",\n    \"color\":\"blue\",\n    \"quantity\":2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{new_ecom_base}}/cart/1",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"cart",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add product to cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\":1,\n    \"size\":\"M\",\n    \"color\":\"blue\",\n    \"quantity\":1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{new_ecom_base}}/cart",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove product from cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/cart/5",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"cart",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create new order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"addressId\":1\n    // \"firstLine\":\"first line of add\",\n    // \"secondLine\":\"second line of add\",\n    // \"city\":\"city-1\",\n    // \"state\":\"state-1\",\n    // \"pincode\":\"410206\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{new_ecom_base}}/orders",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get  all orders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/orders",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get order by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/orders/1",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"orders",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "make payment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/orders/3/payment",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"orders",
+								"3",
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/products",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "product by id",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/products/2",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"products",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "categories",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/categories",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "check payment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/orders/payment",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"orders",
+								"payment"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "register admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"admin1@gmail.com\",\n    \"password\":\"Password1234\",\n    \"firstName\":\"test\",\n    \"lastName\":\"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{new_ecom_base}}/admin",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign In",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin1@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Password1234",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{new_ecom_base}}/admin/signIn",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"admin",
+								"signIn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\":\"description-3\",\n    \"image\":\"image-3\",\n    \"price\":1000,\n    \"title\":\"product-4\",\n    \"topLevelCategory\":\"Men\",\n    \"secondLevelCategory\":\"Clothes & Wear\",\n    \"thirdLevelCategory\":\"Shirts\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{new_ecom_base}}/admin/products",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"admin",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add availibility",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"size\":\"S\",\n    \"color\":\"green\",\n    \"quantity\":20,\n    \"priceOfEach\":300\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{new_ecom_base}}/admin/products/availability?productId=5",
+							"host": [
+								"{{new_ecom_base}}"
+							],
+							"path": [
+								"admin",
+								"products",
+								"availability"
+							],
+							"query": [
+								{
+									"key": "productId",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

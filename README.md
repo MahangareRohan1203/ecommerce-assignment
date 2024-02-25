@@ -110,3 +110,4 @@ GET /api/orders/ 🔐
 
 - I have provided the json file of my postman collection at root folder of repository so if you are running locally you can use that by importing option that is available on postman.
 - Don't forget to change Environment variables in postman collection while using.
+:[JSON POSTMAN COLLECTION](/E-commerce%20Masai%20Assignment.postman_collection.json)
