@@ -1,13 +1,20 @@
 package com.swiftcart.swiftcart.serviceImplementation;
 
+import com.razorpay.Order;
+import com.razorpay.PaymentLink;
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
 import com.swiftcart.swiftcart.entity.*;
 import com.swiftcart.swiftcart.enums.OrderStatus;
+import com.swiftcart.swiftcart.enums.PaymentStatus;
 import com.swiftcart.swiftcart.exception.CartException;
 import com.swiftcart.swiftcart.exception.CustomerException;
 import com.swiftcart.swiftcart.repository.*;
 import com.swiftcart.swiftcart.request.CartItemRequest;
 import com.swiftcart.swiftcart.service.CustomerService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +23,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerServiceImplementation implements CustomerService {
@@ -50,6 +58,9 @@ public class CustomerServiceImplementation implements CustomerService {
 
     @Autowired
     private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     @Override
     public Customer addNewCustomer(Customer customer) throws CustomerException {
@@ -233,7 +244,7 @@ public class CustomerServiceImplementation implements CustomerService {
             orderRepository.save(order);
         }
 
-        for(CartItem d: existed.getCart().getCartItemList()){
+        for (CartItem d : existed.getCart().getCartItemList()) {
             cartItemRepository.deleteById(d.getCartItemId());
         }
 
@@ -255,6 +266,72 @@ public class CustomerServiceImplementation implements CustomerService {
             throw new CustomerException("This order belongs to another person");
         return order;
 
+    }
+
+
+    @Value("${razorpay.api.key}")
+    private String apiKey;
+
+    @Value("${razorpay.api.secret}")
+    private String secret;
+
+    @Override
+    public String getPaymentLink(String email, long id) throws CustomerException {
+        Customer existed = customerRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        Orders order = orderRepository.findById(id).orElseThrow(() -> new CustomerException("Order not found with given order id"));
+
+        try {
+            RazorpayClient razorpayClient = new RazorpayClient(apiKey, secret);
+            JSONObject paymentLinkRequest = new JSONObject();
+            paymentLinkRequest.put("amount", order.getTotalPrice() * 100);
+            paymentLinkRequest.put("currency", "INR");
+
+            JSONObject customer = new JSONObject();
+            customer.put("name", existed.getFirstName());
+            customer.put("email", existed.getEmail());
+            paymentLinkRequest.put("customer", customer);
+
+            JSONObject notify = new JSONObject();
+            notify.put("email", true);
+            notify.put("sms", true);
+
+            paymentLinkRequest.put("notify", notify);
+
+
+            PaymentLink paymentLink = razorpayClient.paymentLink.create(paymentLinkRequest);
+            String paymentLinkId = paymentLink.get("id");
+            String paymentLinkUrl = paymentLink.get("short_url");
+            String orderId = paymentLink.get("order_id");
+            System.out.println("PAYMENT_LINK_ID " + paymentLinkId);
+            System.out.println("PAYMENT_LINK_URL " + paymentLinkUrl);
+            System.out.println("ORDER ID" + orderId);
+            System.out.println(paymentLink);
+
+
+            Payment payment = new Payment();
+            payment.setPaymentID(paymentLinkId);
+            payment.setPaymentStatus(PaymentStatus.PENDING);
+            payment.setAmount(order.getTotalPrice());
+            payment.setOrder(order);
+            paymentRepository.save(payment);
+
+            return paymentLinkUrl;
+        } catch (RazorpayException r) {
+            throw new CustomerException(r.getMessage());
+        }
+    }
+
+    @Override
+    public void checkPaymentStatus(String id) {
+        try {
+            RazorpayClient razorpayClient = new RazorpayClient(apiKey, secret);
+//            JSONObject paymentLinkRequest = new JSONObject();
+//            Order o = razorpayClient.orders.fetch("order_NeqAWr84k5bS78");
+//            System.out.println(Optional.ofNullable(o.get("status")));
+// TODO: Try to do with PaymentLinkId which is already have
+        } catch (RazorpayException r) {
+            System.out.println("ERROR MESSAGE - ------ --" + r.getMessage());
+        }
     }
 }
 

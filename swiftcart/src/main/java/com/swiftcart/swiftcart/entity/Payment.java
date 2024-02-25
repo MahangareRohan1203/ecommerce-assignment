@@ -10,7 +10,7 @@ import lombok.Data;
 public class Payment {
 
     @Id
-    private Long paymentID;
+    private String paymentID;
 
     private String razorpayPaymentId;
 

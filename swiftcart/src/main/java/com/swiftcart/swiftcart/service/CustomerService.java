@@ -1,5 +1,6 @@
 package com.swiftcart.swiftcart.service;
 
+import com.razorpay.RazorpayException;
 import com.swiftcart.swiftcart.entity.*;
 import com.swiftcart.swiftcart.exception.CartException;
 import com.swiftcart.swiftcart.exception.CustomerException;
@@ -30,4 +31,8 @@ public interface CustomerService {
     List<Orders> findAllOrders(String email) throws CustomerException;
 
     Orders findOrderById(String email, long id)  throws CustomerException;
+
+    String getPaymentLink(String email, long id) throws CustomerException, RazorpayException;
+
+    void checkPaymentStatus(String id);
 }

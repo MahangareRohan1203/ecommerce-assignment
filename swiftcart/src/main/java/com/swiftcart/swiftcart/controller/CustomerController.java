@@ -1,5 +1,6 @@
 package com.swiftcart.swiftcart.controller;
 
+import com.razorpay.RazorpayException;
 import com.swiftcart.swiftcart.config.JwtGenerator;
 import com.swiftcart.swiftcart.entity.*;
 import com.swiftcart.swiftcart.exception.CartException;
@@ -111,9 +112,17 @@ public class CustomerController {
     }
 
     @GetMapping("/orders/{id}/payment") //
-    public ResponseEntity<Null> createPaymentLinkHandler(@RequestHeader("Authorization") String jwt, @PathVariable long id) {
-        return ResponseEntity.ok(null);
+    public ResponseEntity<Response> createPaymentLinkHandler(@RequestHeader("Authorization") String jwt, @PathVariable long id) throws CustomerException, RazorpayException {
+        String email = jwtGenerator.getEmailFromToken(jwt);
+        String link = customerService.getPaymentLink(email, id);
+        return ResponseEntity.ok(new Response(link));
     }
 
 
+    @GetMapping("/orders/payment")
+    public ResponseEntity<Response> checkPayment(@RequestHeader("Authorization") String jwt){
+        String email = jwtGenerator.getEmailFromToken(jwt);
+        customerService.checkPaymentStatus(email);
+        return ResponseEntity.ok(null);
+    }
 }
