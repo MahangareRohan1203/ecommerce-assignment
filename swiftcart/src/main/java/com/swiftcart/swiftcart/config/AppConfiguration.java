@@ -51,8 +51,8 @@ public class AppConfiguration {
                             .requestMatchers(HttpMethod.POST, "/users", "/admin")
                             .permitAll()
                             .requestMatchers(HttpMethod.GET,"/products/**", "/categories/**").permitAll()
-                            .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
-                            .requestMatchers("/api/users/**").hasAuthority("USER")
+                            .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                            .requestMatchers("/users/**").hasAuthority("USER")
                             .anyRequest().authenticated();
                 }).cors(c -> c.configurationSource(new CorsConfigurationSource() {
                     @Override
@@ -68,6 +68,7 @@ public class AppConfiguration {
                         return corsConfiguration;
                     }
                 }))
+                .addFilterBefore(new RateLimitingFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class).exceptionHandling(c ->
                         c.authenticationEntryPoint(customTokenException)
                                 .accessDeniedHandler(accessDeniedHandler))

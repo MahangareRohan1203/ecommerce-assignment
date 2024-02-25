@@ -330,7 +330,7 @@ public class CustomerServiceImplementation implements CustomerService {
 //            System.out.println(Optional.ofNullable(o.get("status")));
 // TODO: Try to do with PaymentLinkId which is already have
         } catch (RazorpayException r) {
-            System.out.println("ERROR MESSAGE - ------ --" + r.getMessage());
+            throw new RuntimeException(r.getMessage());
         }
     }
 }
