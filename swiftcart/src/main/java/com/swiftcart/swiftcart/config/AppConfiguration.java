@@ -54,6 +54,7 @@ public class AppConfiguration {
                             .requestMatchers("/admin/**").hasAuthority("ADMIN")
                             .requestMatchers("/users/**").hasAuthority("USER")
                             .anyRequest().authenticated();
+//                            .anyRequest().permitAll();
                 }).cors(c -> c.configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
@@ -74,7 +75,10 @@ public class AppConfiguration {
                                 .accessDeniedHandler(accessDeniedHandler))
 
                 .csrf(c -> c.disable())
-                .httpBasic(c -> c.authenticationEntryPoint(customAuthenticationException)).formLogin(Customizer.withDefaults());
+                .oauth2Login(Customizer.withDefaults())
+//                .httpBasic(c -> c.authenticationEntryPoint(customAuthenticationException))
+                .httpBasic(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults());
 
         return httpSecurity.build();
 
